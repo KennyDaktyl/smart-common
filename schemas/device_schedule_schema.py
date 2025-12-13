@@ -1,6 +1,6 @@
 from typing import Optional
 
-from app.schemas.base import APIModel, ORMModel
+from schemas.base import APIModel, ORMModel
 
 
 class DeviceScheduleBase(APIModel):

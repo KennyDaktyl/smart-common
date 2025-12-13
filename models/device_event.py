@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, Numeric, String
 
-from app.core.db import Base
+from core.db import Base
 
 
 class DeviceEvent(Base):

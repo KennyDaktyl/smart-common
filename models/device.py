@@ -5,8 +5,8 @@ from sqlalchemy import (JSON, UUID, Boolean, Column, DateTime, Enum, ForeignKey,
                         String)
 from sqlalchemy.orm import relationship
 
-from app.constans.device_mode import DeviceMode
-from app.core.db import Base
+from core.db import Base
+from enums.device import DeviceMode
 
 
 class Device(Base):
@@ -22,7 +22,6 @@ class Device(Base):
     device_number = Column(Integer, nullable=False)
     rated_power_kw = Column(Numeric, nullable=True)
 
-    # 🔧 Enum trybu pracy
     mode = Column(
         Enum(DeviceMode, name="devicemode", create_type=False),
         default=DeviceMode.MANUAL,
@@ -34,7 +33,6 @@ class Device(Base):
 
     schedule = Column(JSON, nullable=True)
 
-    is_on = Column(Boolean, default=False)
     last_update = Column(DateTime(timezone=True), default=datetime.now(timezone.utc))
     manual_state = Column(Boolean, nullable=True)
 

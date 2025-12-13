@@ -1,10 +1,10 @@
-# src/app/core/db.py
+# src/core/db.py
 from contextlib import asynccontextmanager
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, scoped_session, sessionmaker
 
-from app.core.config import settings
+from core.config import settings
 
 engine = create_engine(settings.DATABASE_URL, future=True)
 SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))

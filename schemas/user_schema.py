@@ -3,9 +3,9 @@ from typing import List
 
 from pydantic import EmailStr
 
-from app.constans.role import UserRole
-from app.schemas.base import APIModel, ORMModel
-from app.schemas.installation_schema import InstallationOut
+from enums.user import UserRole
+from schemas.base import APIModel, ORMModel
+from schemas.installation_schema import InstallationOut
 
 
 class UserCreate(APIModel):
@@ -30,19 +30,12 @@ class UserResponse(ORMModel):
     role: UserRole
     is_active: bool
     created_at: datetime
-    huawei_username: str | None = None
-
-
-class HuaweiCredentialsUpdate(APIModel):
-    huawei_username: str
-    huawei_password: str
 
 
 class UserInstallationsResponse(ORMModel):
     id: int
     email: str
     role: str
-    huawei_username: str | None = None
     created_at: datetime
     installations: List[InstallationOut] = []
 

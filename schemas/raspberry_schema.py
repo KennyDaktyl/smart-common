@@ -4,8 +4,8 @@ from uuid import UUID
 
 from pydantic import ConfigDict
 
-from app.schemas.base import APIModel, ORMModel
-from app.schemas.device_schema import DeviceOut
+from schemas.base import APIModel, ORMModel
+from schemas.device_schema import DeviceOut
 
 
 # ====== BASE ======
@@ -19,12 +19,10 @@ class RaspberryBase(APIModel):
 # ====== CREATE ======
 class RaspberryCreate(RaspberryBase):
     user_id: Optional[int] = None
-    inverter_id: Optional[int] = None
 
 
 # ====== UPDATE ======
 class RaspberryUpdate(RaspberryBase):
-    inverter_id: Optional[int] = None
     user_id: Optional[int] = None
 
 
@@ -33,7 +31,6 @@ class RaspberryOut(RaspberryBase, ORMModel):
     uuid: UUID
     id: int
     user_id: Optional[int]
-    inverter_id: Optional[int]
 
     model_config = ConfigDict(from_attributes=True, extra="forbid")
 
@@ -44,7 +41,6 @@ class RaspberryCreateOut(RaspberryBase, ORMModel):
     id: int
     secret_plain: str
     user_id: Optional[int]
-    inverter_id: Optional[int]
 
     model_config = ConfigDict(from_attributes=True, extra="forbid")
 

@@ -1,7 +1,7 @@
 from typing import List, Optional
 
-from app.schemas.base import APIModel, ORMModel
-from app.schemas.inverter_schema import InverterOut
+from schemas.base import APIModel, ORMModel
+from schemas.provider_schema import ProviderOut
 
 
 class InstallationLite(ORMModel):
@@ -27,4 +27,4 @@ class InstallationUpdate(APIModel):
 class InstallationOut(InstallationBase, ORMModel):
     id: int
     user_id: int
-    inverters: List[InverterOut] = []
+    providers: List[ProviderOut] = []

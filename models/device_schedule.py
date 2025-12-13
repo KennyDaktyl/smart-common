@@ -1,7 +1,8 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, Enum, ForeignKey, Integer, Numeric, String, Time
 from sqlalchemy.orm import relationship
 
-from app.core.db import Base
+from enums.device import DeviceMode
+from core.db import Base
 
 
 class DeviceSchedule(Base):
@@ -9,12 +10,23 @@ class DeviceSchedule(Base):
 
     id = Column(Integer, primary_key=True)
     device_id = Column(Integer, ForeignKey("devices.id", ondelete="CASCADE"))
+    name = Column(String, nullable=True)
     day_of_week = Column(String, nullable=False)  # mon, tue, wed, ...
-    start_time = Column(String, nullable=False)  # "10:00"
-    end_time = Column(String, nullable=False)  # "20:00"
+    start_time = Column(Time, nullable=False)
+    end_time = Column(Time, nullable=False)
+    mode = Column(
+        Enum(DeviceMode, name="device_mode", create_type=False),
+        default=DeviceMode.AUTO_POWER,
+        nullable=False,
+    )
+    threshold_kw = Column(Numeric(10, 3), nullable=True)
     enabled = Column(Boolean, default=True)
 
     device = relationship("Device", back_populates="schedules")
 
     def __repr__(self):
-        return f"<DeviceSchedule id={self.id} {self.day_of_week} {self.start_time}-{self.end_time}>"
+        return (
+            f"<DeviceSchedule id={self.id} name={self.name!r} device={self.device_id} "
+            f"{self.day_of_week} {self.start_time}-{self.end_time} "
+            f"mode={self.mode} threshold={self.threshold_kw}>"
+        )

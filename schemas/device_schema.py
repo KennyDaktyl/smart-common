@@ -4,8 +4,8 @@ from uuid import UUID
 
 from pydantic import Field
 
-from app.constans.device_mode import DeviceMode
-from app.schemas.base import APIModel, ORMModel
+from enums.device import DeviceMode
+from schemas.base import APIModel, ORMModel
 
 
 class DeviceBase(APIModel):
