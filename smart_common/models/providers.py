@@ -1,19 +1,11 @@
-from datetime import datetime, timezone
-from uuid import uuid4
+from __future__ import annotations
 
-from sqlalchemy import (
-    UUID,
-    Column,
-    DateTime,
-    Enum,
-    ForeignKey,
-    Integer,
-    JSON,
-    Numeric,
-    String,
-    Boolean,
-)
-from sqlalchemy.orm import relationship
+from datetime import datetime, timezone
+from uuid import UUID as UUIDType, uuid4
+
+from sqlalchemy import DateTime, Enum, ForeignKey, Integer, JSON, Numeric, Boolean, String
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from smart_common.core.db import Base
 from smart_common.enums.provider import (
@@ -27,56 +19,42 @@ from smart_common.enums.provider import (
 class Provider(Base):
     __tablename__ = "providers"
 
-    id = Column(Integer, primary_key=True)
-    uuid = Column(
-        UUID(as_uuid=True),
-        unique=True,
-        nullable=False,
-        index=True,
-        default=uuid4,
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    uuid: Mapped[UUIDType] = mapped_column(
+        UUID(as_uuid=True), unique=True, nullable=False, index=True, default=uuid4
     )
-    installation_id = Column(
-        Integer,
-        ForeignKey("installations.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True,
+    installation_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("installations.id", ondelete="CASCADE"), nullable=False, index=True
     )
-    name = Column(String, nullable=False)
-    provider_type = Column(
-        Enum(ProviderType, name="provider_type_enum"),
-        nullable=False,
+    name: Mapped[str] = mapped_column(String, nullable=False)
+    provider_type: Mapped[ProviderType] = mapped_column(
+        Enum(ProviderType, name="provider_type_enum"), nullable=False
     )
-    kind = Column(
-        Enum(ProviderKind, name="provider_kind_enum"),
-        nullable=False,
+    kind: Mapped[ProviderKind] = mapped_column(
+        Enum(ProviderKind, name="provider_kind_enum"), nullable=False
     )
-    vendor = Column(Enum(ProviderVendor), nullable=True)
-    model = Column(String, nullable=True)
-    unit = Column(
-        Enum(PowerUnit, name="power_unit_enum"),
-        nullable=False,
+    vendor: Mapped[ProviderVendor | None] = mapped_column(Enum(ProviderVendor), nullable=True)
+    model: Mapped[str | None] = mapped_column(String, nullable=True)
+    unit: Mapped[PowerUnit] = mapped_column(Enum(PowerUnit, name="power_unit_enum"), nullable=False)
+    min_value: Mapped[float] = mapped_column(Numeric(12, 4), nullable=False)
+    max_value: Mapped[float] = mapped_column(Numeric(12, 4), nullable=False)
+    last_value: Mapped[float | None] = mapped_column(Numeric(12, 4), nullable=True)
+    last_measurement_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    polling_interval_sec: Mapped[int] = mapped_column(Integer, nullable=False)
+    enabled: Mapped[bool] = mapped_column(Boolean, default=True)
+    config: Mapped[dict] = mapped_column(JSON, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
-    min_value = Column(Numeric(12, 4), nullable=False)
-    max_value = Column(Numeric(12, 4), nullable=False)
-    last_value = Column(Numeric(12, 4), nullable=True)
-    last_measurement_at = Column(DateTime(timezone=True), nullable=True)
-    polling_interval_sec = Column(Integer, nullable=False)
-    enabled = Column(Boolean, default=True)
-    config = Column(JSON, nullable=False)
-    created_at = Column(
-        DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
-    )
-    updated_at = Column(
+    updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc),
     )
-    installation = relationship(
-        "Installation",
-        back_populates="providers",
+    installation = relationship("Installation", back_populates="providers")
+    raspberries = relationship(
+        "Raspberry", back_populates="provider", cascade="all, delete-orphan"
     )
-    raspberries = relationship("Raspberry", back_populates="provider", cascade="all, delete-orphan")
 
     def __repr__(self) -> str:
         return (

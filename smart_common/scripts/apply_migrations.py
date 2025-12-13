@@ -17,7 +17,7 @@ load_dotenv(ENV_PATH, encoding="utf-8")
 
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from smart_common.core.config import settings
+from core.config import settings
 
 
 def _build_config() -> Config:

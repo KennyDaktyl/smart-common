@@ -1,4 +1,7 @@
-import uuid
+from __future__ import annotations
+
+from uuid import UUID as UUIDType
+import uuid as uuid_lib
 from datetime import datetime, timezone
 
 from sqlalchemy import JSON, Boolean, DateTime, Enum, ForeignKey, Integer, Numeric, String
@@ -14,8 +17,8 @@ class Device(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String, nullable=False)
-    uuid: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), unique=True, default=uuid.uuid4, index=True
+    uuid: Mapped[UUIDType] = mapped_column(
+        UUID(as_uuid=True), unique=True, default=uuid_lib.uuid4, index=True
     )
 
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
