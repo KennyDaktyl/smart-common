@@ -34,9 +34,7 @@ class DeviceScheduleUpdateRequest(APIModel):
     start_time: Optional[str] = Field(
         None, pattern=r"^\d{2}:\d{2}$", description="Updated start time"
     )
-    end_time: Optional[str] = Field(
-        None, pattern=r"^\d{2}:\d{2}$", description="Updated end time"
-    )
+    end_time: Optional[str] = Field(None, pattern=r"^\d{2}:\d{2}$", description="Updated end time")
     enabled: Optional[bool] = Field(None, description="Updated enabled flag")
 
 

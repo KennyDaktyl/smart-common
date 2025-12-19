@@ -10,10 +10,10 @@ from smart_common.schemas.base import APIModel, ORMModel
 from smart_common.schemas.installations import InstallationResponse
 from smart_common.schemas.user_profile_schema import UserProfileResponse
 
-
 # ------------------------------------------------------------------
 # BASE
 # ------------------------------------------------------------------
+
 
 class UserBase(APIModel):
     email: EmailStr
@@ -23,6 +23,7 @@ class UserBase(APIModel):
 # INPUT SCHEMAS
 # ------------------------------------------------------------------
 
+
 class UserCreate(UserBase):
     """
     Schema used ONLY for user registration.
@@ -31,6 +32,7 @@ class UserCreate(UserBase):
     - role is ALWAYS set server-side
     - is_active is ALWAYS False on creation
     """
+
     password: str = Field(..., min_length=8, description="Plain-text password")
 
 
@@ -47,6 +49,7 @@ class UserLogin(APIModel):
 # ------------------------------------------------------------------
 # OUTPUT SCHEMAS
 # ------------------------------------------------------------------
+
 
 class UserResponse(UserBase, ORMModel):
     id: int
@@ -81,6 +84,7 @@ class AdminUserUpdate(APIModel):
     """
     Admin-only update.
     """
+
     email: Optional[EmailStr] = None
     role: Optional[UserRole] = None
     is_active: Optional[bool] = None
@@ -90,11 +94,14 @@ class UserUpdate(APIModel):
     """
     Update own profile (SELF).
     """
+
     email: Optional[EmailStr] = None
-    
+
+
 # ------------------------------------------------------------------
 # AUTH / TOKENS
 # ------------------------------------------------------------------
+
 
 class TokenResponse(APIModel):
     access_token: str

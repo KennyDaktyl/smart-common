@@ -11,7 +11,9 @@ from smart_common.schemas.providers import ProviderResponse
 
 
 class MicrocontrollerCreateRequest(APIModel):
-    name: str = Field(..., description="Display name for the microcontroller", example="Gateway Alpha")
+    name: str = Field(
+        ..., description="Display name for the microcontroller", example="Gateway Alpha"
+    )
     description: Optional[str] = Field(
         None,
         description="Additional notes or location details",
@@ -54,7 +56,9 @@ class MicrocontrollerStatusRequest(APIModel):
 class MicrocontrollerResponse(ORMModel):
     id: int = Field(..., description="Internal ID", example=10)
     uuid: UUID = Field(..., description="Public UUID of the controller")
-    installation_id: int = Field(..., description="Installation that owns the controller", example=3)
+    installation_id: int = Field(
+        ..., description="Installation that owns the controller", example=3
+    )
     providers: List[ProviderResponse] = Field(default_factory=list)
     devices: List[DeviceResponse] = Field(default_factory=list)
     name: str = Field(..., description="Display name for the controller", example="Gateway Alpha")

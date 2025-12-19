@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import List, Optional
-
 from smart_common.models.installation import Installation
 from smart_common.repositories.base import BaseRepository
 
@@ -9,37 +7,45 @@ from smart_common.repositories.base import BaseRepository
 class InstallationRepository(BaseRepository[Installation]):
     model = Installation
 
-    def get_by_user(self, user_id: int) -> List[Installation]:
-        return self.session.query(self.model).filter(self.model.user_id == user_id).all()
-
-    def get_by_station_code(self, station_code: str) -> Optional[Installation]:
-        return (
-            self.session.query(self.model).filter(self.model.station_code == station_code).first()
-        )
-
-    def get_for_user_by_id(self, installation_id: int, user_id: int) -> Optional[Installation]:
+    def list_by_user(self, user_id: int) -> list[Installation]:
         return (
             self.session.query(self.model)
-            .filter(self.model.id == installation_id, self.model.user_id == user_id)
-            .first()
+            .filter(
+                self.model.user_id == user_id,
+                self.model.is_active.is_(True),
+            )
+            .all()
         )
 
-    def update_for_user(
-        self, installation_id: int, user_id: int, data: dict
-    ) -> Optional[Installation]:
-        installation = self.get_for_user_by_id(installation_id, user_id)
-        if not installation:
-            return None
-        for key, value in data.items():
-            setattr(installation, key, value)
-        self.session.flush()
-        self.session.refresh(installation)
-        return installation
+    def get_by_id(self, installation_id: int) -> Installation | None:
+        return self.session.get(self.model, installation_id)
 
-    def delete_for_user(self, installation_id: int, user_id: int) -> bool:
-        installation = self.get_for_user_by_id(installation_id, user_id)
-        if not installation:
-            return False
-        self.session.delete(installation)
-        self.session.flush()
-        return True
+    def exists_by_station_code(self, code: str) -> bool:
+        return (
+            self.session.query(self.model.id)
+            .filter(
+                self.model.station_code == code,
+                self.model.is_active.is_(True),
+            )
+            .first()
+            is not None
+        )
+
+    def soft_delete(self, installation: Installation) -> None:
+        installation.is_active = False
+        self.session.add(installation)
+
+    def get_active_for_user(
+        self,
+        installation_id: int,
+        user_id: int,
+    ) -> Installation | None:
+        return (
+            self.session.query(self.model)
+            .filter(
+                self.model.id == installation_id,
+                self.model.user_id == user_id,
+                self.model.is_active.is_(True),
+            )
+            .one_or_none()
+        )

@@ -1,7 +1,7 @@
 import json
 import logging
 from datetime import datetime, timezone
-from typing import Any, Dict, Type, Optional
+from typing import Any, Dict, Optional, Type
 
 from pydantic import BaseModel, Field, ValidationError
 
@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 # ============================================================
 # 1) BASE EVENT SCHEMA
 # ============================================================
+
 
 class Event(BaseModel):
     """
@@ -42,6 +43,7 @@ class Event(BaseModel):
 # ============================================================
 # 2) SPECYFICZNE EVENTY PLATFORMY
 # ============================================================
+
 
 class InverterUpdatePayload(BaseModel):
     inverter_id: int
@@ -121,6 +123,7 @@ def decode_event(raw_json: bytes) -> Event:
 # 4) WYSYŁANIE EVENTÓW — unified API
 # ============================================================
 
+
 async def publish_event(subject: str, event: Event):
     """
     Publikuje event jako JetStream message.
@@ -142,6 +145,7 @@ async def publish_event(subject: str, event: Event):
 # ============================================================
 # 5) Helpry do szybkiego tworzenia eventów
 # ============================================================
+
 
 def make_inverter_update(**data) -> InverterUpdateEvent:
     return InverterUpdateEvent(payload=InverterUpdatePayload(**data))

@@ -1,20 +1,96 @@
-<html>
-  <body>
-    <p>Cześć 👋</p>
+<!DOCTYPE html>
+<html lang="pl" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Potwierdzenie e-mail – Smart Energy</title>
+  </head>
 
-    <p>Dziękujemy za rejestrację w Smart Energy.</p>
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      font-family: Arial, Helvetica, sans-serif;
+    "
+  >
+    <table
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      role="presentation"
+      style="background-color: #f4f4f4; padding: 20px 0;"
+    >
+      <tr>
+        <td align="center">
+          <table
+            width="600"
+            cellpadding="0"
+            cellspacing="0"
+            role="presentation"
+            style="
+              width: 100%;
+              max-width: 600px;
+              background-color: #ffffff;
+            "
+          >
+            <tr>
+              <td
+                style="
+                  padding: 20px;
+                  font-size: 14px;
+                  line-height: 1.6;
+                  color: #111111;
+                "
+              >
+                <p style="margin-top: 0;">Cześć 👋</p>
 
-    <p>
-      Kliknij poniższy link, aby potwierdzić e-mail:
-      <br />
-      <a href="${confirm_link}">${confirm_link}</a>
-    </p>
+                <p>Dziękujemy za rejestrację w <strong>Smart Energy</strong>.</p>
 
-    <p>Jeśli link nie działa, użyj tokena:</p>
+                <p>
+                  Kliknij poniższy link, aby potwierdzić adres e-mail:
+                </p>
 
-    <p><strong>${token}</strong></p>
+                <p style="margin: 16px 0; word-break: break-all;">
+                  <a
+                    href="${confirm_link}"
+                    style="color: #2563eb; text-decoration: underline;"
+                  >
+                    ${confirm_link}
+                  </a>
+                </p>
 
-    <hr />
-    <p>Smart Energy</p>
+                <p>Jeśli link nie działa, użyj tokena:</p>
+
+                <p
+                  style="
+                    background-color: #f1f1f1;
+                    padding: 10px;
+                    font-family: monospace;
+                    font-size: 14px;
+                    word-break: break-all;
+                  "
+                >
+                  ${token}
+                </p>
+
+                <hr
+                  style="
+                    margin: 24px 0;
+                    border: none;
+                    border-top: 1px solid #e5e5e5;
+                  "
+                />
+
+                <p style="font-size: 12px; color: #666666; margin: 0;">
+                  Pozdrawiamy,<br />
+                  <strong>Smart Energy</strong>
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
   </body>
 </html>

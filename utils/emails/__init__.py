@@ -1,11 +1,10 @@
+import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-import smtplib
 from pathlib import Path
 from string import Template
 
 from smart_common.core.config import settings
-
 
 TEMPLATES_DIR = Path(__file__).parent / "email_templates"
 

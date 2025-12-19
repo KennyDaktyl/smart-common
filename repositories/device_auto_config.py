@@ -1,4 +1,5 @@
 from sqlalchemy import and_
+
 from smart_common.models.device_auto_config import DeviceAutoConfig
 from smart_common.repositories.base import BaseRepository
 

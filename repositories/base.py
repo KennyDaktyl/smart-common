@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from enum import Enum
 from typing import Any, Generic, Type, TypeVar, Union
+
 from sqlalchemy import UUID, String, func
-from sqlalchemy.orm import Session, Query
+from sqlalchemy.orm import Query, Session
 
 ModelT = TypeVar("ModelT")
 
@@ -15,10 +16,10 @@ class BaseRepository(Generic[ModelT]):
     model: Type[ModelT]
 
     searchable_fields: dict[str, Any] = {}
-    
+
     def __init__(self, session: Session) -> None:
         self.session = session
-    
+
     def _base_query(self) -> Query:
         return self.session.query(self.model)
 
@@ -114,7 +115,7 @@ class BaseRepository(Generic[ModelT]):
         self.session.commit()
         self.session.refresh(obj)
         return obj
-    
+
     def delete(self, obj: ModelT) -> None:
         self.session.delete(obj)
         self.session.flush()

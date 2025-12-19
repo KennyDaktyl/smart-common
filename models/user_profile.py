@@ -1,13 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy import (
-    Column,
-    ForeignKey,
-    Integer,
-    String,
-    DateTime,
-    func,
-)
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, func
 from sqlalchemy.orm import relationship
 
 from smart_common.core.db import Base
@@ -64,5 +57,6 @@ class UserProfile(Base):
         back_populates="profile",
         lazy="joined",
     )
+
     def __repr__(self) -> str:
         return f"<UserProfile id={self.id} user_id={self.user_id}>"

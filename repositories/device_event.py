@@ -6,7 +6,6 @@ from sqlalchemy import and_
 
 from smart_common.enums.device_event import DeviceEventName, DeviceEventType
 from smart_common.models.device_event import DeviceEvent
-
 from smart_common.repositories.base import BaseRepository
 
 

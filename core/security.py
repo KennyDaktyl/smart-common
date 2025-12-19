@@ -15,8 +15,8 @@ from typing import Any
 from cryptography.fernet import Fernet
 from jose import ExpiredSignatureError, JWTError, jwt
 from passlib.context import CryptContext
-from smart_common.core.config import settings
 
+from smart_common.core.config import settings
 
 logger = logging.getLogger(__name__)
 

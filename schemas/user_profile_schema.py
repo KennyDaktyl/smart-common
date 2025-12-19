@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from pydantic import Field
 from typing import Optional
+
+from pydantic import Field
 
 from smart_common.schemas.base import APIModel, ORMModel
 

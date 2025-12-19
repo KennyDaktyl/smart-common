@@ -5,27 +5,20 @@ from __future__ import annotations
 # BOOTSTRAP PYTHONPATH (SUBMODULE SAFE)
 # ======================================================
 import sys
-import os
 from pathlib import Path
 
-SMART_COMMON_PATH = os.getenv("SMART_COMMON_PATH")
-
-if SMART_COMMON_PATH:
-    BASE_DIR = Path(SMART_COMMON_PATH).resolve()
-else:
-    # fallback: script inside smart_common/scripts/
-    BASE_DIR = Path(__file__).resolve().parents[1]
-
+# script: smart_common/scripts/apply_migrations.py
+BASE_DIR = Path(__file__).resolve().parents[1]  # smart_common
 sys.path.insert(0, str(BASE_DIR))
 
 # ======================================================
 # STANDARD IMPORTS
 # ======================================================
 import logging
-from dotenv import load_dotenv
 
 from alembic import command
 from alembic.config import Config
+from dotenv import load_dotenv
 
 # ======================================================
 # PATHS
@@ -46,22 +39,22 @@ from smart_common.core.config import settings
 
 
 def main() -> int:
-    logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
-
-    logging.info(
-        "Applying Alembic migrations to %s",
-        settings.DATABASE_URL,
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(levelname)s: %(message)s",
     )
 
+    logging.info("Applying Alembic migrations")
+    logging.info("Database: %s", settings.DATABASE_URL)
+
     config = Config(str(ALEMBIC_INI_PATH))
+
+    # 🔥 KLUCZOWE: to MUSI być ustawione
+    config.set_main_option("script_location", str(ALEMBIC_DIR))
+
     config.set_main_option(
         "sqlalchemy.url",
         settings.DATABASE_URL.replace("%", "%%"),
-    )
-
-    config.set_main_option(
-        "script_location",
-        str(ALEMBIC_DIR),
     )
 
     command.upgrade(config, "head")

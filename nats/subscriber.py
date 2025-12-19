@@ -1,4 +1,5 @@
 import logging
+
 from .client import nats_client
 
 logger = logging.getLogger(__name__)

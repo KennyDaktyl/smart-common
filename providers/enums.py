@@ -19,7 +19,14 @@ class ProviderVendor(str, Enum):
     # API
     HUAWEI = "huawei"
     GOODWE = "goodwe"
-    SIEMENS = "siemens"
+    SMA = "sma"
+    SOLAREDGE = "solaredge"
+    FRONIUS = "fronius"
+    GROWATT = "growatt"
+    SUNGROW = "sungrow"
+    KOSTAL = "kostal"
+    VICTRON = "victron"
+    ENPHASE = "enphase"
 
     # Sensors
     DHT22 = "dht22"

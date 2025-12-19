@@ -16,7 +16,7 @@ class UserRepository(BaseRepository[User]):
 
     ADMIN_EDITABLE_FIELDS = {"email", "role", "is_active"}
     SELF_EDITABLE_FIELDS = {"email"}
-    
+
     searchable_fields = {
         "email": User.email,
         "is_active": User.is_active,
@@ -64,12 +64,7 @@ class UserRepository(BaseRepository[User]):
         )
 
     def get_with_profile(self, user_id: int) -> Optional[User]:
-        return (
-            self.session.query(User)
-            .outerjoin(User.profile)
-            .filter(User.id == user_id)
-            .first()
-        )
+        return self.session.query(User).outerjoin(User.profile).filter(User.id == user_id).first()
 
     def upsert_profile(
         self,
@@ -89,7 +84,7 @@ class UserRepository(BaseRepository[User]):
         self.session.commit()
         self.session.refresh(user.profile)
         return user.profile
-    
+
     def update_user_admin(
         self,
         user: User,

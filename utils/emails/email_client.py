@@ -1,7 +1,7 @@
+import logging
+import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-import smtplib
-import logging
 from pathlib import Path
 from string import Template
 
@@ -99,9 +99,7 @@ def _send_email_smtp(message: MIMEMultipart) -> None:
             if settings.EMAIL_USER:
                 server.login(
                     settings.EMAIL_USER,
-                    settings.EMAIL_PASSWORD.get_secret_value()
-                    if settings.EMAIL_PASSWORD
-                    else "",
+                    settings.EMAIL_PASSWORD.get_secret_value() if settings.EMAIL_PASSWORD else "",
                 )
 
             server.send_message(message)

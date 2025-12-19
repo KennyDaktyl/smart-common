@@ -35,7 +35,7 @@ class InstallationResponse(InstallationBase, ORMModel):
         default_factory=list,
         description="Microcontrollers (Raspberry Pi) assigned to installation",
     )
-    
+
     model_config = ConfigDict(
         from_attributes=True,
         extra="forbid",
@@ -48,3 +48,8 @@ class InstallationResponse(InstallationBase, ORMModel):
             }
         },
     )
+
+
+class InstallationUpdateRequest(APIModel):
+    name: str | None = None
+    station_addr: str | None = None

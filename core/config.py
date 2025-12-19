@@ -14,7 +14,7 @@ class CommonSettings(BaseSettings):
 
     ENV: str = Field("development", env="ENV")
     BACKEND_PORT: int = Field(8000, env="PORT")
-    
+
     # ------------------------------------------------------------------
     # Logging
     # ------------------------------------------------------------------

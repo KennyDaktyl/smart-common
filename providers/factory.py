@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Any, Callable, Dict, Tuple, Type
 
-from smart_common.enums.provider import ProviderType
+from smart_common.providers.enums import ProviderType
 from smart_common.schemas.provider_schema import ProviderBase
 
 from .base import BaseProviderAdapter
@@ -51,7 +51,9 @@ class ProviderAdapterFactory:
         return adapter_cls(config)
 
 
-def register_adapter(provider_type: ProviderType | str, *, vendor: str | None = None) -> Any:
+def register_adapter(
+    provider_type: ProviderType | str, *, vendor: str | None = None
+) -> Any:
     def decorator(adapter_cls: Type[BaseProviderAdapter]) -> Type[BaseProviderAdapter]:
         ProviderAdapterFactory.register(provider_type, adapter_cls, vendor=vendor)
         return adapter_cls

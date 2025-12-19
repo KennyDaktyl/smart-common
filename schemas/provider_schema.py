@@ -6,8 +6,8 @@ from uuid import UUID
 
 from pydantic import Field
 
-from smart_common.enums.provider import ProviderKind, ProviderType, ProviderVendor
 from smart_common.enums.unit import PowerUnit
+from smart_common.providers.enums import ProviderKind, ProviderType, ProviderVendor
 from smart_common.schemas.base import APIModel, ORMModel
 
 
