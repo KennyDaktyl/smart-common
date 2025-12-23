@@ -4,7 +4,6 @@ from typing import Any, Optional
 
 from sqlalchemy.orm import selectinload
 
-from smart_common.models.installation import Installation
 from smart_common.models.microcontroller import Microcontroller
 from smart_common.models.user import User
 from smart_common.models.user_profile import UserProfile
@@ -33,14 +32,39 @@ class UserRepository(BaseRepository[User]):
         return self.session.get(User, user_id)
 
     # -----------------------------
-    # INSTALLATIONS (średnie)
+    # AUTH / STATE
     # -----------------------------
-    def get_with_installations(self, user_id: int) -> Optional[User]:
+    def activate_user(self, user: User) -> User:
+        """
+        Activate user after email confirmation.
+        """
+        user.is_active = True
+        self.session.add(user)
+        self.session.commit()
+        self.session.refresh(user)
+        return user
+
+    def deactivate_user(self, user: User) -> User:
+        return self.partial_update(
+            user,
+            data={"is_active": False},
+            allowed_fields={"is_active"},
+        )
+
+    def update_password(self, user: User, password_hash: str) -> User:
+        user.password_hash = password_hash
+        self.session.add(user)
+        self.session.commit()
+        self.session.refresh(user)
+        return user
+
+    # -----------------------------
+    # MICROCONTROLLERS (średnie)
+    # -----------------------------
+    def get_with_microcontrollers(self, user_id: int) -> Optional[User]:
         return (
             self.session.query(User)
-            .options(
-                selectinload(User.installations),
-            )
+            .options(selectinload(User.microcontrollers))
             .filter(User.id == user_id)
             .first()
         )
@@ -48,24 +72,35 @@ class UserRepository(BaseRepository[User]):
     # -----------------------------
     # FULL DETAILS (ciężkie)
     # -----------------------------
-    def get_with_installations_details(self, user_id: int) -> Optional[User]:
+    def get_with_microcontrollers_details(self, user_id: int) -> Optional[User]:
         return (
             self.session.query(User)
             .options(
-                selectinload(User.installations)
-                .selectinload(Installation.microcontrollers)
-                .selectinload(Microcontroller.devices),
-                selectinload(User.installations)
-                .selectinload(Installation.microcontrollers)
-                .selectinload(Microcontroller.providers),
+                selectinload(User.microcontrollers).selectinload(
+                    Microcontroller.devices
+                ),
+                selectinload(User.microcontrollers).selectinload(
+                    Microcontroller.sensor_providers
+                ),
+                selectinload(User.microcontrollers).selectinload(
+                    Microcontroller.power_provider
+                ),
             )
             .filter(User.id == user_id)
             .first()
         )
 
     def get_with_profile(self, user_id: int) -> Optional[User]:
-        return self.session.query(User).outerjoin(User.profile).filter(User.id == user_id).first()
+        return (
+            self.session.query(User)
+            .outerjoin(User.profile)
+            .filter(User.id == user_id)
+            .first()
+        )
 
+    # -----------------------------
+    # PROFILE
+    # -----------------------------
     def upsert_profile(
         self,
         user: User,
@@ -85,6 +120,9 @@ class UserRepository(BaseRepository[User]):
         self.session.refresh(user.profile)
         return user.profile
 
+    # -----------------------------
+    # PARTIAL UPDATES
+    # -----------------------------
     def update_user_admin(
         self,
         user: User,
@@ -105,11 +143,4 @@ class UserRepository(BaseRepository[User]):
             user,
             data=data,
             allowed_fields=self.SELF_EDITABLE_FIELDS,
-        )
-
-    def deactivate_user(self, user: User) -> User:
-        return self.partial_update(
-            user,
-            data={"is_active": False},
-            allowed_fields={"is_active"},
         )

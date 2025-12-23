@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import Any, List, Optional
 from uuid import UUID
 
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import Query, joinedload
 
-from smart_common.models.installation import Installation
 from smart_common.models.microcontroller import Microcontroller
 from smart_common.repositories.base import BaseRepository
 
@@ -18,19 +17,17 @@ class MicrocontrollerRepository(BaseRepository[Microcontroller]):
 
     def get_for_user(self, user_id: int) -> List[Microcontroller]:
         return (
-            self.session.query(self.model)
-            .join(self.model.installation)
-            .filter(Installation.user_id == user_id)
-            .all()
+            self.session.query(self.model).filter(self.model.user_id == user_id).all()
         )
 
-    def get_for_user_by_uuid(self, uuid: UUID, user_id: int) -> Optional[Microcontroller]:
+    def get_for_user_by_uuid(
+        self, uuid: UUID, user_id: int
+    ) -> Optional[Microcontroller]:
         return (
             self.session.query(self.model)
-            .join(self.model.installation)
             .filter(
                 self.model.uuid == uuid,
-                Installation.user_id == user_id,
+                self.model.user_id == user_id,
             )
             .first()
         )
@@ -43,7 +40,9 @@ class MicrocontrollerRepository(BaseRepository[Microcontroller]):
         self.session.refresh(microcontroller)
         return microcontroller
 
-    def update_for_user(self, uuid: UUID, user_id: int, data: dict) -> Optional[Microcontroller]:
+    def update_for_user(
+        self, uuid: UUID, user_id: int, data: dict
+    ) -> Optional[Microcontroller]:
         microcontroller = self.get_for_user_by_uuid(uuid, user_id)
         if not microcontroller:
             return None
@@ -64,20 +63,71 @@ class MicrocontrollerRepository(BaseRepository[Microcontroller]):
     def get_full_for_user(self, user_id: int):
         microcontrollers = (
             self.session.query(self.model)
-            .join(self.model.installation)
-            .filter(Installation.user_id == user_id)
+            .filter(self.model.user_id == user_id)
             .options(
                 joinedload(self.model.devices),
-                joinedload(self.model.providers),
+                joinedload(self.model.sensor_providers),
+                joinedload(self.model.power_provider),
+                joinedload(self.model.sensor_capabilities),
+            )
+            .all()
+        )
+        return microcontrollers
+
+    def _with_full_options(self, query: Query) -> Query:
+        return query.options(
+            joinedload(self.model.devices),
+            joinedload(self.model.sensor_providers),
+            joinedload(self.model.power_provider),
+            joinedload(self.model.sensor_capabilities),
+            joinedload(self.model.user),
+        )
+
+    def list_full(
+        self,
+        *,
+        limit: int | None = None,
+        offset: int | None = None,
+        filters: dict[str, Any] | None = None,
+        order_by: Any | None = None,
+    ) -> list[Microcontroller]:
+        query = self._with_full_options(self._base_query())
+        query = self._apply_filters(query, filters)
+
+        if order_by is not None:
+            query = query.order_by(order_by)
+
+        if offset is not None:
+            query = query.offset(offset)
+
+        if limit is not None:
+            query = query.limit(limit)
+
+        return query.all()
+
+    def list_all_for_admin(self):
+        return (
+            self.session.query(self.model)
+            .options(
+                joinedload(self.model.user),
+                joinedload(self.model.devices),
+                joinedload(self.model.sensor_providers),
+                joinedload(self.model.power_provider),
+                joinedload(self.model.sensor_capabilities),
             )
             .all()
         )
 
-        installations = (
-            self.session.query(Installation)
-            .filter(Installation.user_id == user_id)
-            .options(joinedload(Installation.microcontrollers))
-            .all()
+    def get_full_by_uuid(self, uuid: UUID) -> Microcontroller | None:
+        return (
+            self.session.query(self.model)
+            .filter(self.model.uuid == uuid)
+            .options(
+                joinedload(self.model.user),
+                joinedload(self.model.devices),
+                joinedload(self.model.sensor_providers),
+                joinedload(self.model.power_provider),
+                joinedload(self.model.sensor_capabilities),
+            )
+            .one_or_none()
         )
-
-        return microcontrollers, installations

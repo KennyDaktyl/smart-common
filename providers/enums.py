@@ -4,7 +4,7 @@ from enum import Enum
 class ProviderType(str, Enum):
     API = "api"
     SENSOR = "sensor"
-    VIRTUAL = "virtual"
+    MANUAL_OR_SCHEDULED = "manual_or_scheduled"
 
 
 class ProviderKind(str, Enum):
@@ -28,7 +28,7 @@ class ProviderVendor(str, Enum):
     VICTRON = "victron"
     ENPHASE = "enphase"
 
-    # Sensors
+    # Sensors (hardware-only; must be validated against microcontroller capabilities)
     DHT22 = "dht22"
     BME280 = "bme280"
     BH1750 = "bh1750"

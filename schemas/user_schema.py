@@ -7,7 +7,7 @@ from pydantic import ConfigDict, EmailStr, Field
 
 from smart_common.enums.user import UserRole
 from smart_common.schemas.base import APIModel, ORMModel
-from smart_common.schemas.installations import InstallationResponse
+from smart_common.schemas.microcontroller_schema import MicrocontrollerResponse
 from smart_common.schemas.user_profile_schema import UserProfileResponse
 
 # ------------------------------------------------------------------
@@ -25,30 +25,12 @@ class UserBase(APIModel):
 
 
 class UserCreate(UserBase):
-    """
-    Schema used ONLY for user registration.
-
-    Security rules:
-    - role is ALWAYS set server-side
-    - is_active is ALWAYS False on creation
-    """
-
     password: str = Field(..., min_length=8, description="Plain-text password")
-
-
-class UserUpdate(APIModel):
-    email: Optional[EmailStr] = None
-    password: Optional[str] = Field(None, min_length=8)
 
 
 class UserLogin(APIModel):
     email: EmailStr
     password: str
-
-
-# ------------------------------------------------------------------
-# OUTPUT SCHEMAS
-# ------------------------------------------------------------------
 
 
 class UserResponse(UserBase, ORMModel):
@@ -64,9 +46,9 @@ class UserResponse(UserBase, ORMModel):
 
 
 class UserDetailsResponse(UserResponse):
-    installations: List[InstallationResponse] = Field(
+    microcontrollers: List[MicrocontrollerResponse] = Field(
         default_factory=list,
-        description="Installations owned by the user",
+        description="Microcontrollers owned by the user",
     )
     profile: Optional[UserProfileResponse] = None
 
@@ -90,17 +72,12 @@ class AdminUserUpdate(APIModel):
     is_active: Optional[bool] = None
 
 
-class UserUpdate(APIModel):
+class UserSelfUpdate(APIModel):
     """
     Update own profile (SELF).
     """
 
     email: Optional[EmailStr] = None
-
-
-# ------------------------------------------------------------------
-# AUTH / TOKENS
-# ------------------------------------------------------------------
 
 
 class TokenResponse(APIModel):

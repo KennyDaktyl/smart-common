@@ -1,3 +1,4 @@
+# smart-api/smart_common/schemas/pagination_schema.py
 from __future__ import annotations
 
 from typing import Generic, List, TypeVar
@@ -18,3 +19,8 @@ class PaginationMeta(APIModel):
 class PaginatedResponse(APIModel, Generic[T]):
     meta: PaginationMeta
     items: List[T]
+
+
+class PaginationQuery(APIModel):
+    limit: int = Field(20, ge=1, le=100)
+    offset: int = Field(0, ge=0)
