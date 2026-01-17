@@ -15,11 +15,13 @@ from sqlalchemy import (
     String,
     Integer,
     UniqueConstraint,
+    select,
 )
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship, object_session
 
 from smart_common.core.db import Base
+from smart_common.models.provider_measurement import ProviderMeasurement
 from smart_common.providers.enums import ProviderKind, ProviderType, ProviderVendor
 from smart_common.enums.unit import PowerUnit
 from smart_common.schemas.normalized_measurement import (
@@ -139,6 +141,21 @@ class Provider(Base):
     @property
     def default_expected_interval_sec(self) -> int | None:
         return self.expected_interval_sec
+
+    @property
+    def last_value(self) -> ProviderMeasurement | None:
+        session = object_session(self)
+        if session is None or self.id is None:
+            return None
+
+        stmt = (
+            select(ProviderMeasurement)
+            .where(ProviderMeasurement.provider_id == self.id)
+            .order_by(ProviderMeasurement.measured_at.desc())
+            .limit(1)
+        )
+
+        return session.execute(stmt).scalars().first()
 
 
 class ProviderCredential(Base):

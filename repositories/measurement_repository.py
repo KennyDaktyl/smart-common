@@ -69,6 +69,4 @@ class MeasurementRepository:
         provider: Provider,
         measurement: NormalizedMeasurement,
     ) -> None:
-        provider.last_value = measurement.value
-        provider.last_measurement_at = measurement.measured_at
-        self.session.add(provider)
+        return

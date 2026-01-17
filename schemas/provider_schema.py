@@ -7,6 +7,9 @@ from pydantic import ConfigDict, Field, field_validator
 from smart_common.enums.unit import PowerUnit
 from smart_common.providers.enums import ProviderKind, ProviderType, ProviderVendor
 from smart_common.schemas.base import APIModel, ORMModel
+from smart_common.schemas.provider_measurement_schemas import (
+    ProviderMeasurementResponse,
+)
 
 
 class MicrocontrollerProviderConfig(APIModel):
@@ -97,6 +100,8 @@ class ProviderResponse(ORMModel):
 
     created_at: datetime
     updated_at: datetime
+
+    last_value: Optional[ProviderMeasurementResponse]
 
     model_config = ConfigDict(
         from_attributes=True,
