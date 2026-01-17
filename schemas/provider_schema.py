@@ -90,10 +90,8 @@ class ProviderResponse(ORMModel):
     value_min: Optional[float]
     value_max: Optional[float]
 
-    last_value: Optional[float]
-    last_measurement_at: Optional[datetime]
     default_expected_interval_sec: Optional[int]
-    
+
     enabled: bool
     config: Dict[str, Any]
 

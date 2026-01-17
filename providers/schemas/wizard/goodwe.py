@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from pydantic import Field
+from pydantic import Field, field_validator
 
 from smart_common.schemas.base import APIModel
 
@@ -32,6 +32,19 @@ class GoodWePowerStationStep(APIModel):
             }
         },
     )
+
+    @field_validator("powerstation_id", mode="before")
+    @classmethod
+    def _normalize_powerstation_id(cls, value):
+        if isinstance(value, list):
+            if not value:
+                raise ValueError("No power station selected")
+            value = value[0]
+        if isinstance(value, dict):
+            value = value.get("value") or value.get("label") or value.get("id")
+        if isinstance(value, str):
+            return value
+        raise ValueError("powerstation_id must be a string or selection object")
 
 
 class GoodWeDetailsForm(APIModel):
